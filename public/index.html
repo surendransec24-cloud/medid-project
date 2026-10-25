@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MedID – Digital Health Records & Emergency Assistance</title>
+<style>
+:root{--bg:#f4f8fb;--card:#fff;--tx:#12263a;--mu:#5b6f82;--bd:#dbe6ee;--pri:#1769c2;--teal:#0c9c8f;--red:#d62839;--ok:#177a4b;--warn:#a86400;--sh:0 2px 10px rgba(20,60,100,.08);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1822;--card:#16232f;--tx:#e6eef5;--mu:#93a6b8;--bd:#274052;--pri:#5aa6f2;--teal:#3fc8ba;--red:#ff6575;--ok:#4cc48a;--warn:#f0b24a;--sh:none}}
+:root[data-theme="dark"]{--bg:#0e1822;--card:#16232f;--tx:#e6eef5;--mu:#93a6b8;--bd:#274052;--pri:#5aa6f2;--teal:#3fc8ba;--red:#ff6575;--ok:#4cc48a;--warn:#f0b24a;--sh:none}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:0 0 10px}p{margin:4px 0}.mu{color:var(--mu);font-size:13px}
+.app{display:flex;min-height:100vh}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--bd);z-index:5;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;color:var(--mu);padding:8px 2px;font:inherit;font-size:11px;cursor:pointer}nav button b{display:block;font-size:20px;font-weight:400}nav button.on{color:var(--pri);font-weight:600}
+main{flex:1;max-width:820px;width:100%;margin:0 auto;padding:16px 14px 90px}
+@media(min-width:800px){nav{position:sticky;top:0;height:100vh;width:200px;flex:none;flex-direction:column;border-top:0;border-right:1px solid var(--bd);padding:20px 10px;gap:4px}nav button{flex:none;text-align:left;padding:10px 12px;font-size:14px;border-radius:10px;display:flex;gap:10px;align-items:center}nav button b{display:inline;font-size:18px}nav button.on{background:var(--bg)}main{padding-bottom:30px}.logo{display:block!important}}
+.logo{display:none;font-weight:700;font-size:20px;color:var(--pri);padding:0 12px 14px}
+.banner{background:#fff4d6;color:#6b4a00;border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:12px}
+@media(prefers-color-scheme:dark){.banner{background:#3a2f12;color:#f2d28a}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;box-shadow:var(--sh);margin-bottom:12px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.btn{border:0;border-radius:12px;padding:10px 16px;background:var(--pri);color:#fff;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.o{background:none;border:1px solid var(--bd);color:var(--tx)}.btn.t{background:var(--teal)}.btn.d{background:var(--red)}.btn.s{padding:6px 12px;font-size:13px}
+.sos{width:100%;padding:22px;font-size:24px;border-radius:20px;background:var(--red);color:#fff;border:0;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(214,40,57,.35)}
+.tile{text-align:center;cursor:pointer;font-weight:600}.tile b{display:block;font-size:26px;font-weight:400}
+.tag{display:inline-block;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:1px 10px;font-size:12px;color:var(--mu)}
+.blood{background:var(--red);color:#fff;border-radius:12px;padding:6px 14px;font-size:22px;font-weight:800}
+label{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
+.item{cursor:pointer;border-top:1px solid var(--bd);padding:10px 0}.item:first-child{border-top:0}
+.ok{color:var(--ok)}.er{color:var(--red)}.wn{color:var(--warn)}
+.sw{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--bd);gap:10px}
+.qr{display:grid;grid-template-columns:repeat(15,1fr);width:150px;border:6px solid #fff;background:#fff;border-radius:6px}.qr i{aspect-ratio:1;background:#fff}.qr i.k{background:#111}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;background:#12263a;color:#fff;padding:10px 16px;border-radius:12px;z-index:20;display:none;max-width:90%}
+#toast.err{background:var(--red)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:30;padding:20px}.modal .card{max-width:340px;margin:0}
+img.att{max-width:100%;border-radius:10px;border:1px solid var(--bd)}
+</style></head><body>
+<div class="app"><nav id="nav"></nav><main id="main"></main></div>
+<div id="toast"></div><div id="modal"></div>
+<script>
+const $=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,10);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CATS=['Laboratory Reports','Prescriptions','Medical Imaging','Vaccination Records','Discharge Summaries','Other Medical Documents'];
+const KEY='medid_demo_v1',MAXB=1024*1024,OKT=['application/pdf','image/jpeg','image/png'];
+const fd=d=>d?new Date(d).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'';
+const ft=d=>new Date(d).toLocaleString();
+function seed(){return{demo:true,meds:seedMeds(),appts:seedAppts(),profile:{name:'Aarav Kumar',dob:'2003-05-14',phone:'+91 90000 00000',blood:'B+',allergies:'Penicillin',conditions:'Asthma',meds:'Salbutamol inhaler (as needed)',donor:'Yes',notes:'Carries inhaler in left bag pocket.'},
+records:[{id:'r1',title:'Complete Blood Count',cat:CATS[0],provider:'City Diagnostics (demo)',date:'2026-09-02',notes:'All values in normal range.'},{id:'r2',title:'Asthma Prescription',cat:CATS[1],provider:'Dr. S. Rao (demo)',date:'2026-08-18',notes:'Review in 3 months.'},{id:'r3',title:'COVID-19 Booster',cat:CATS[3],provider:'Govt. Health Centre (demo)',date:'2025-12-10',notes:'Batch recorded on card.'}],
+contacts:[{id:'c1',name:'Meena Kumar',rel:'Mother',phone:'+91 98000 11111'},{id:'c2',name:'Ravi Kumar',rel:'Father',phone:'+91 98000 22222'}],
+log:[],alert:null,token:uid()+uid(),active:true,
+prefs:{theme:'auto',showName:true,showContacts:true,showMeds:true,notify:true,biometric:false}}}
+let S,cur={v:'home',id:null,q:'',cat:'All',pend:null},mem=false;
+function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){mem=true}return seed()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){mem=true;toast('Could not save permanently (storage full or blocked)','err');return false}}
+function toast(m,t){const e=$('#toast');e.textContent=m;e.className=t||'';e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',3200)}
+function ask(msg,fn){$('#modal').innerHTML=`<div class="modal"><div class="card"><p>${esc(msg)}</p><div class="row" style="margin-top:12px"><button class="btn o" onclick="$('#modal').innerHTML=''">Cancel</button><button class="btn d" id="yes">Confirm</button></div></div></div>`;$('#yes').onclick=()=>{$('#modal').innerHTML='';fn()}}
+function go(v,id,x){cur={...cur,v,id:id||null,pend:null,...(x||{})};render();scrollTo(0,0)}
+const NAV=[['home','🏠','Home'],['records','📁','Records'],['eid','🪪','Emergency ID'],['care','💊','Care'],['sos','🚨','SOS'],['profile','👤','Profile']];
+const grp={form:'records',detail:'records',eview:'eid',log:'eid',contacts:'sos',settings:'profile'};
+function render(){const on=grp[cur.v]||cur.v;
+$('#nav').innerHTML='<span class="logo">🩺 MedID</span>'+NAV.map(n=>`<button class="${on==n[0]?'on':''}" onclick="go('${n[0]}')"><b>${n[1]}</b>${n[2]}</button>`).join('');
+$('#main').innerHTML=`<div class="banner">⚠️ <b>Demo mode:</b> sample data, stored only in this browser${mem?' (storage unavailable — data lost on refresh)':''}. Not a real medical record. SOS alerts are real only when run via the local server (npm start) with a channel configured.</div>`+V[cur.v]()}
+const back=(v,l)=>`<button class="btn o s" onclick="go('${v}')" style="margin-bottom:10px">← ${l}</button>`;
+const V={
+home(){const p=S.profile,h=new Date().getHours(),g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+return`<div class="row"><div><h1>${g}, ${esc(p.name.split(' ')[0])}</h1><p class="mu">Your health information at a glance</p></div><div class="blood">${esc(p.blood||'?')}</div></div>
+<div class="card" style="margin-top:12px"><h2>⚠️ Medical alerts</h2><p><b>Allergies:</b> ${esc(p.allergies||'None listed')}</p><p><b>Conditions:</b> ${esc(p.conditions||'None listed')}</p></div>
+<button class="sos" onclick="go('sos')">🚨 SOS EMERGENCY</button>
+<div class="grid" style="margin:12px 0"><div class="card tile" onclick="go('eview')"><b>🪪</b>Emergency ID</div><div class="card tile" onclick="go('records')"><b>📁</b>View records</div><div class="card tile" onclick="go('form')"><b>➕</b>Add record</div><div class="card tile" onclick="go('eid')"><b>✏️</b>Edit profile</div></div>
+<div class="card"><div class="row"><h2>Recent records</h2><span class="tag">demo data</span></div>${S.records.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3).map(recItem).join('')||'<p class="mu">No records yet.</p>'}</div>
+${remCard()}`},
+records(){const q=cur.q.toLowerCase(),L=S.records.filter(r=>(cur.cat=='All'||r.cat==cur.cat)&&(!q||[r.title,r.provider,r.notes,r.cat].join(' ').toLowerCase().includes(q))).sort((a,b)=>b.date.localeCompare(a.date));
+return`<div class="row"><h1>Health Records</h1><button class="btn" onclick="go('form')">➕ Add</button></div>
+<div class="row" style="margin:10px 0"><input style="flex:2;min-width:150px" id="q" placeholder="Search records…" value="${esc(cur.q)}" oninput="cur.q=this.value;keepFocus()"><select style="flex:1;min-width:140px" onchange="cur.cat=this.value;render()">${['All',...CATS].map(c=>`<option ${c==cur.cat?'selected':''}>${c}</option>`).join('')}</select></div>
+<div class="card">${L.map(recItem).join('')||`<p class="mu" style="text-align:center;padding:20px">${S.records.length?'No records match your search.':'No records yet. Tap Add to create one.'}</p>`}</div>`},
+form(){const r=S.records.find(x=>x.id==cur.id)||{},p=cur.pend;
+return`${back(r.id?'detail':'records','Back').replace("go('detail')",`go('detail','${r.id}')`)}<h1>${r.id?'Edit':'Add'} record</h1><div class="card">
+<label>Title *</label><input id="t" value="${esc(r.title)}" maxlength="80"><label>Category *</label><select id="c">${CATS.map(c=>`<option ${c==r.cat?'selected':''}>${c}</option>`).join('')}</select>
+<label>Hospital / provider *</label><input id="pv" value="${esc(r.provider)}" maxlength="80"><label>Date *</label><input id="d" type="date" value="${esc(r.date||new Date().toISOString().slice(0,10))}">
+<label>Notes</label><textarea id="n" rows="3" maxlength="500">${esc(r.notes)}</textarea>
+<label>Attachment (PDF, JPG, PNG — max 1 MB)</label><input id="f" type="file" accept=".pdf,.jpg,.jpeg,.png" onchange="pickFile(this)"><p class="mu" id="fm">${r.file?'Current: '+esc(r.file.name)+' (choose a new file to replace)':''}</p>
+<p class="er" id="err"></p><div class="row" style="margin-top:10px"><button class="btn o" onclick="go('records')">Cancel</button><button class="btn t" onclick="saveRec('${r.id||''}')">Save record</button></div></div>`},
+detail(){const r=S.records.find(x=>x.id==cur.id);if(!r)return back('records','Records')+'<p>Record not found.</p>';
+return`${back('records','Records')}<div class="card"><span class="tag">${esc(r.cat)}</span><h1 style="margin-top:8px">${esc(r.title)}</h1><p>🏥 ${esc(r.provider)}</p><p>📅 ${fd(r.date)}</p><p style="margin-top:8px">${esc(r.notes)||'<span class="mu">No notes.</span>'}</p>
+${r.file?(r.file.type.startsWith('image')?`<p style="margin-top:10px"><img class="att" src="${r.file.data}" alt="${esc(r.file.name)}"></p>`:`<p style="margin-top:10px">📄 <a href="${r.file.data}" target="_blank" rel="noopener">${esc(r.file.name)}</a> <span class="mu">(PDF stored in browser)</span></p>`):'<p class="mu" style="margin-top:8px">No attachment.</p>'}
+<div class="row" style="margin-top:14px"><button class="btn o s" onclick="go('form','${r.id}')">✏️ Edit</button><button class="btn s" onclick="shareRec('${r.id}')">📤 Share</button><button class="btn d s" onclick="delRec('${r.id}')">🗑 Delete</button></div></div>`},
+eid(){const p=S.profile;
+return`<div class="row"><h1>Emergency Medical ID</h1><button class="btn t s" onclick="go('eview')">View emergency screen</button></div><p class="mu">Edit the information shown to responders.</p>
+<div class="card"><label>Full name</label><input id="p1" value="${esc(p.name)}"><label>Blood group</label><select id="p2">${['A+','A-','B+','B-','AB+','AB-','O+','O-','Unknown'].map(b=>`<option ${b==p.blood?'selected':''}>${b}</option>`).join('')}</select>
+<label>Allergies</label><input id="p3" value="${esc(p.allergies)}"><label>Existing conditions</label><input id="p4" value="${esc(p.conditions)}"><label>Current medications</label><input id="p5" value="${esc(p.meds)}">
+<label>Organ donor</label><select id="p6">${['Yes','No','Not specified'].map(b=>`<option ${b==p.donor?'selected':''}>${b}</option>`).join('')}</select><label>Important notes</label><textarea id="p7" rows="3">${esc(p.notes)}</textarea>
+<p class="er" id="err"></p><button class="btn t" style="margin-top:12px" onclick="saveProf()">Save emergency info</button></div>
+<div class="card"><h2>QR access (concept)</h2><div class="row" style="align-items:flex-start"><div class="qr" aria-label="QR concept">${qrCells()}</div><div style="flex:1;min-width:200px"><p class="${S.active?'ok':'er'}"><b>Link status: ${S.active?'Active':'Revoked'}</b></p><p class="mu">Token: ${esc(S.token.slice(0,6))}… The QR would hold only this random token, never medical data. This image is a <b>visual concept, not scannable</b>, and there is no server here to validate tokens.</p>
+<div class="row" style="justify-content:flex-start;margin-top:8px"><button class="btn o s" onclick="S.token=uid()+uid();S.active=true;save();render();toast('New token generated; old one invalid')">Regenerate</button><button class="btn d s" onclick="S.active=false;save();render();toast('Access revoked')">Revoke</button></div></div></div></div>
+<div class="row"><button class="btn o" onclick="go('contacts')">👥 Emergency contacts</button><button class="btn o" onclick="go('log')">🧾 Access log</button></div>`},
+eview(){const p=S.profile,f=S.prefs;
+if(!S.active){return back('eid','Emergency ID')+'<div class="card"><h2 class="er">Access revoked</h2><p>This emergency link has been revoked by the owner.</p></div>'}
+if(cur.logged!==S.token+cur.v){S.log.unshift({id:uid(),t:Date.now(),ev:'Emergency view opened (simulated scan, '+(navigator.userAgent.includes('Mobile')?'mobile':'desktop')+')'});S.log=S.log.slice(0,50);save();cur.logged=S.token+cur.v}
+return`${back('eid','Emergency ID')}<div class="card" style="border:2px solid var(--red)"><p class="er"><b>🚑 EMERGENCY MEDICAL INFORMATION (read-only)</b></p><div class="row"><h1>${f.showName?esc(p.name):'Name hidden by owner'}</h1><div class="blood">${esc(p.blood)}</div></div>
+<p><b>Allergies:</b> ${esc(p.allergies)||'—'}</p><p><b>Conditions:</b> ${esc(p.conditions)||'—'}</p>${f.showMeds?`<p><b>Medications:</b> ${esc(p.meds)||'—'}</p>`:''}<p><b>Organ donor:</b> ${esc(p.donor)}</p><p><b>Notes:</b> ${esc(p.notes)||'—'}</p>
+${f.showContacts?'<h2 style="margin-top:12px">Emergency contacts</h2>'+(S.contacts.map(c=>`<p>${esc(c.name)} (${esc(c.rel)}) — <a href="tel:${esc(c.phone.replace(/[^+\d]/g,''))}">${esc(c.phone)}</a></p>`).join('')||'<p class="mu">None added.</p>'):''}</div>`},
+sos(){const a=S.alert,s=cur.sos||0;
+if(a&&a.status=='active')return`<h1>SOS status</h1><div class="card" style="border:2px solid var(--red)"><p class="er"><b>🚨 SOS ALERT ACTIVE</b></p>${a.err?`<p class="er"><b>❌ Not sent:</b> ${esc(a.err)}</p>`:(a.results||[]).map(x=>`<p class="${x.ok?'ok':'er'}">${x.ok?'✅':'❌'} <b>${esc(x.channel)}:</b> ${esc(x.detail)}</p>`).join('')}<p>Started: ${ft(a.t)}</p><p>Location: ${a.loc?`${a.loc.lat.toFixed(5)}, ${a.loc.lng.toFixed(5)} (<a target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat=${a.loc.lat}&mlon=${a.loc.lng}#map=16/${a.loc.lat}/${a.loc.lng}">open map</a>)`:'<span class="er">unavailable</span>'}</p>
+<p>Contacts selected: ${a.to.map(esc).join(', ')||'none'}</p><p>Location included: <b>${a.loc?"yes":"no"}</b></p><button class="btn d" style="margin-top:10px" onclick="cancelSos()">Cancel alert</button></div>`;
+if(s==1)return`<h1>Confirm emergency</h1><div class="card" style="border:2px solid var(--red)"><p><b>Is this a real emergency?</b> Confirming sends a <b>real</b> alert to your selected contacts if the server is configured.</p>
+<div class="row" style="justify-content:flex-start;margin:10px 0"><button class="btn o s" onclick="askLoc()">📍 Get my location</button><span id="loc" class="mu">${cur.loc?cur.loc.lat.toFixed(5)+', '+cur.loc.lng.toFixed(5):cur.locErr||'Not requested'}</span></div>
+<h2>Share with</h2>${S.contacts.map(c=>`<label style="font-weight:400;display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" class="cc" value="${esc(c.name)}" checked> ${esc(c.name)} (${esc(c.rel)})</label>`).join('')||'<p class="mu">No contacts. <a href="#" onclick="go(\'contacts\');return false">Add one</a>.</p>'}
+<div class="row" style="margin-top:14px"><button class="btn o" onclick="go('sos',null,{sos:0})">Cancel</button><button class="btn d" onclick="startSos()">Send alert</button></div></div>`;
+return`<h1>SOS Emergency Assistance</h1><p class="mu">Tap to begin. You'll be asked to confirm first.</p><button class="sos" style="margin:12px 0" onclick="go('sos',null,{sos:1,loc:null,locErr:''});askLoc()">🚨 SOS</button>
+<div class="card"><h2>Call for real help</h2><p class="mu">The only real-world action in this prototype is a phone call link.</p><a class="btn d" href="tel:112">📞 Call 112</a> <a class="btn o" href="tel:108">🚑 Ambulance 108</a></div>
+<div class="card"><h2>Nearby emergency services</h2><p class="mu">Opens OpenStreetMap search in a new tab (results not verified).</p><a class="btn o s" target="_blank" rel="noopener" href="https://www.openstreetmap.org/search?query=hospital">🏥 Hospitals</a> <a class="btn o s" target="_blank" rel="noopener" href="https://www.openstreetmap.org/search?query=pharmacy">💊 Pharmacies</a></div>
+<div class="card"><div class="row"><h2>Emergency contacts (${S.contacts.length})</h2><button class="btn o s" onclick="go('contacts')">Manage</button></div></div>
+${S.alert?`<div class="card"><h2>Last alert</h2><p>${ft(S.alert.t)} — <b>${esc(S.alert.status)}</b></p></div>`:''}`},
+contacts(){return`${back('sos','SOS')}<h1>Emergency contacts</h1><div class="card">${S.contacts.map(c=>`<div class="row item" style="cursor:default"><div><b>${esc(c.name)}</b> <span class="tag">${esc(c.rel)}</span><p class="mu">${esc(c.phone)}</p></div><button class="btn d s" onclick="delContact('${c.id}')">Remove</button></div>`).join('')||'<p class="mu">No contacts added yet.</p>'}</div>
+<div class="card"><h2>Add contact</h2><label>Name *</label><input id="cn" maxlength="60"><label>Relationship</label><input id="cr" maxlength="30"><label>Phone *</label><input id="cp" type="tel" placeholder="+91 …"><p class="er" id="err"></p><button class="btn t" style="margin-top:10px" onclick="addContact()">Add contact</button></div>`},
+log(){return`${back('eid','Emergency ID')}<h1>Access log</h1><p class="mu">Records only events that this demo can detect: opening the emergency view in this browser.</p><div class="card">${S.log.map(l=>`<div class="item" style="cursor:default"><b>${esc(l.ev)}</b><p class="mu">${ft(l.t)}</p></div>`).join('')||'<p class="mu" style="text-align:center">No access events yet.</p>'}</div>${S.log.length?'<button class="btn o s" onclick="S.log=[];save();render()">Clear log</button>':''}`},
+profile(){const p=S.profile;return`<h1>Profile</h1><div class="card"><label>Name</label><input id="n1" value="${esc(p.name)}"><label>Date of birth</label><input id="n2" type="date" value="${esc(p.dob)}"><label>Phone</label><input id="n3" value="${esc(p.phone)}"><p class="er" id="err"></p><button class="btn t" style="margin-top:10px" onclick="savePers()">Save</button></div>
+<div class="card tile" style="text-align:left;font-weight:400"><div class="row"><span>🪪 Medical profile</span><button class="btn o s" onclick="go('eid')">Edit</button></div><div class="row" style="margin-top:8px"><span>👥 Emergency contacts</span><button class="btn o s" onclick="go('contacts')">Manage</button></div><div class="row" style="margin-top:8px"><span>⚙️ Privacy & settings</span><button class="btn o s" onclick="go('settings')">Open</button></div></div>
+<div class="card"><h2>Account</h2><p class="mu">No login in this demo (Express + hashed passwords + sessions are planned for the backend version), so there is no sign-out.</p></div>`},
+settings(){const f=S.prefs,sw=(k,l,w,d)=>`<div class="sw"><div>${l}<p class="mu">${d}</p></div><div style="text-align:right"><input type="checkbox" style="width:auto" ${f[k]?'checked':''} onchange="S.prefs.${k}=this.checked;save();toast('Saved')"><p class="tag">${w?'✅ works':'🎨 visual only'}</p></div></div>`;
+return`${back('profile','Profile')}<h1>Privacy & settings</h1><div class="card"><h2>Emergency view sharing</h2>${sw('showName','Show my name',1,'Hide/show name on emergency screen')}${sw('showContacts','Show emergency contacts',1,'On the read-only emergency screen')}${sw('showMeds','Show medications',1,'On the read-only emergency screen')}</div>
+<div class="card"><h2>Appearance</h2><label>Theme</label><select onchange="S.prefs.theme=this.value;save();applyTheme()">${['auto','light','dark'].map(x=>`<option ${S.prefs.theme==x?'selected':''}>${x}</option>`).join('')}</select><p class="tag" style="margin-top:6px">✅ works</p></div><div class="card"><h2>Other</h2>${sw('notify','Medicine reminders',1,'Browser notifications while the page is open')}${sw('biometric','Biometric lock',0,'Needs a native/mobile platform')}</div>
+<div class="card"><h2>Demo data</h2><p class="mu">Everything lives in this browser only and is not encrypted. Do not enter real medical data.</p><button class="btn d s" style="margin-top:8px" onclick="ask('Reset all data to the demo samples?',()=>{S=seed();save();go('home');toast('Demo data restored')})">Reset demo data</button></div>`}};
+const td=()=>new Date().toISOString().slice(0,10),nowHM=()=>new Date().toTimeString().slice(0,5);
+function seedMeds(){return[{id:'m1',name:'Salbutamol inhaler',dose:'As prescribed by Dr. Rao (demo)',times:['08:00','20:00'],start:'2026-08-18',end:'',doctor:'Dr. S. Rao (demo)',log:{}}]}
+function seedAppts(){const d=new Date();d.setDate(d.getDate()+14);return[{id:'a1',doctor:'Dr. S. Rao (demo)',place:'City Clinic (demo)',date:d.toISOString().slice(0,10),time:'10:30',reason:'Asthma review',status:'upcoming'}]}
+function applyTheme(){const t=S.prefs.theme;if(!t||t=='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t)}
+function todayDoses(){return S.meds.filter(m=>m.start<=td()&&(!m.end||m.end>=td())).flatMap(m=>m.times.map(t=>({m,t,st:m.log[td()+'|'+t]}))).sort((a,b)=>a.t.localeCompare(b.t))}
+function remCard(){const d=todayDoses().filter(x=>!x.st),nx=d.find(x=>x.t>=nowHM())||d[0],ap=S.appts.filter(a=>a.status=='upcoming'&&a.date>=td()).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))[0];
+return`<div class="card"><div class="row"><h2>Medicines and appointments</h2><button class="btn o s" onclick="go('care')">Open</button></div><p>💊 ${nx?'Next dose: <b>'+esc(nx.m.name)+'</b> at '+nx.t:'No doses pending today'}</p><p>📅 ${ap?'Next appointment: <b>'+esc(ap.reason)+'</b> on '+fd(ap.date)+' '+esc(ap.time):'No upcoming appointments'}</p></div>`}
+V.care=function(){const t=cur.tab||'meds',tabs=[['meds','💊 Medicines'],['appts','📅 Appointments'],['timeline','🕒 Timeline'],['insights','📊 Insights']];
+return`<h1>Care</h1><div class="row" style="justify-content:flex-start;margin:10px 0">${tabs.map(x=>`<button class="btn ${t==x[0]?'':'o'} s" onclick="cur.tab='${x[0]}';render()">${x[1]}</button>`).join('')}</div>`+TAB[t]()};
+const TAB={
+meds(){const D=todayDoses(),perm='Notification' in window?Notification.permission:'unsupported';
+return`<div class="card"><h2>Today's doses</h2>${D.map(x=>`<div class="row item" style="cursor:default"><div><b>${x.t}</b> ${esc(x.m.name)}<p class="mu">${esc(x.m.dose)}</p></div>${x.st?`<span class="tag">${x.st}</span>`:`<span><button class="btn t s" onclick="dose('${x.m.id}','${x.t}','taken')">Taken</button> <button class="btn o s" onclick="dose('${x.m.id}','${x.t}','skipped')">Skip</button></span>`}</div>`).join('')||'<p class="mu">No doses scheduled today.</p>'}</div>
+<div class="card"><div class="row"><h2>Reminders</h2>${perm=='granted'?'<span class="ok">✅ Browser reminders allowed</span>':'<button class="btn o s" onclick="askNotif()">Enable browser reminders</button>'}</div><p class="mu">Reminders only fire while this page is open in the browser. They do not replace a proper alarm.</p></div>
+<div class="card"><h2>All medicines</h2>${S.meds.map(m=>`<div class="row item" style="cursor:default"><div><b>${esc(m.name)}</b><p class="mu">${esc(m.dose)} · ${m.times.join(', ')} · from ${fd(m.start)}${m.end?' to '+fd(m.end):''}</p></div><button class="btn d s" onclick="delMed('${m.id}')">Delete</button></div>`).join('')||'<p class="mu">No medicines added.</p>'}</div>
+<div class="card"><h2>Add medicine</h2><label>Name *</label><input id="mn" maxlength="60"><label>Dosage instructions (as given by your doctor) *</label><input id="md" maxlength="100"><label>Times, comma separated, 24 h *</label><input id="mt" placeholder="08:00, 20:00"><label>Start date *</label><input id="ms" type="date" value="${td()}"><label>End date</label><input id="me" type="date"><label>Prescribing doctor</label><input id="mdr" maxlength="60"><p class="er" id="err"></p><button class="btn t" style="margin-top:10px" onclick="addMed()">Add medicine</button></div>`},
+appts(){const A=S.appts.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)),up=A.filter(a=>a.status=='upcoming'),pr=A.filter(a=>a.status!='upcoming');
+const row=a=>`<div class="row item" style="cursor:default"><div><b>${esc(a.reason)}</b> <span class="tag">${esc(a.status)}</span><p class="mu">${esc(a.doctor)}, ${esc(a.place)} · ${fd(a.date)} ${esc(a.time)}</p></div><span>${a.status=='upcoming'?`<button class="btn t s" onclick="apSt('${a.id}','completed')">Done</button> <button class="btn o s" onclick="apSt('${a.id}','cancelled')">Cancel</button> `:''}<button class="btn d s" onclick="delAp('${a.id}')">Delete</button></span></div>`;
+return`<div class="card"><h2>Upcoming</h2>${up.map(row).join('')||'<p class="mu">No upcoming appointments.</p>'}</div><div class="card"><h2>Previous</h2>${pr.map(row).join('')||'<p class="mu">None yet.</p>'}</div>
+<div class="card"><h2>Add appointment</h2><p class="mu">This saves a reminder only. It does not book with a hospital.</p><label>Doctor *</label><input id="ad" maxlength="60"><label>Hospital or clinic *</label><input id="ap" maxlength="60"><label>Date *</label><input id="adt" type="date" value="${td()}"><label>Time *</label><input id="atm" type="time" value="10:00"><label>Reason *</label><input id="ar" maxlength="80"><p class="er" id="err"></p><button class="btn t" style="margin-top:10px" onclick="addAp()">Add appointment</button></div>`},
+timeline(){const E=[...S.records.map(r=>({d:r.date,t:r.title,s:r.cat+' · '+r.provider,go:"go('detail','"+r.id+"')"})),...S.appts.filter(a=>a.status=='completed').map(a=>({d:a.date,t:a.reason,s:'Appointment · '+a.doctor,go:''}))].sort((a,b)=>b.d.localeCompare(a.d));
+return`<div class="card"><h2>Health timeline</h2>${E.map(e=>`<div class="item" ${e.go?`onclick="${e.go}"`:'style="cursor:default"'}><b>${esc(e.t)}</b><p class="mu">${fd(e.d)} · ${esc(e.s)}</p></div>`).join('')||'<p class="mu">No events yet.</p>'}</div>`},
+insights(){const c={};S.records.forEach(r=>c[r.cat]=(c[r.cat]||0)+1);const mx=Math.max(1,...Object.values(c));let tk=0,sk=0;S.meds.forEach(m=>Object.values(m.log).forEach(v=>v=='taken'?tk++:sk++));
+return`<div class="card"><h2>Records by category</h2>${Object.entries(c).map(([k,v])=>`<div style="margin:8px 0"><div class="row"><span>${esc(k)}</span><b>${v}</b></div><div style="background:var(--bg);border-radius:6px"><div style="height:10px;border-radius:6px;background:var(--teal);width:${v/mx*100}%"></div></div></div>`).join('')||'<p class="mu">No records yet.</p>'}</div>
+<div class="card"><h2>Medicine log</h2>${tk+sk?`<p><b>${tk}</b> taken, <b>${sk}</b> skipped (${Math.round(tk/(tk+sk)*100)}% of logged doses taken)</p>`:'<p class="mu">Mark doses as taken or skipped to see this.</p>'}<p class="mu">These are counts of what you entered, not medical advice.</p></div>`}};
+function addMed(){const v=i=>$('#'+i).value.trim(),e=$('#err'),ts=v('mt').split(',').map(x=>x.trim()).filter(Boolean);
+if(!v('mn')||!v('md')||!ts.length||!v('ms')){e.textContent='Name, dosage, times and start date are required.';return}
+if(!ts.every(x=>/^([01]\d|2[0-3]):[0-5]\d$/.test(x))){e.textContent='Times must look like 08:00 (24 h).';return}
+if(v('me')&&v('me')<v('ms')){e.textContent='End date cannot be before start date.';return}
+S.meds.push({id:uid(),name:v('mn'),dose:v('md'),times:ts.sort(),start:v('ms'),end:v('me'),doctor:v('mdr'),log:{}});save();toast('Medicine added');render()}
+function dose(id,t,st){S.meds.find(m=>m.id==id).log[td()+'|'+t]=st;save();render()}
+function delMed(id){ask('Delete this medicine?',()=>{S.meds=S.meds.filter(m=>m.id!=id);save();render()})}
+function addAp(){const v=i=>$('#'+i).value.trim();if(!v('ad')||!v('ap')||!v('adt')||!v('atm')||!v('ar')){$('#err').textContent='All fields are required.';return}
+S.appts.push({id:uid(),doctor:v('ad'),place:v('ap'),date:v('adt'),time:v('atm'),reason:v('ar'),status:'upcoming'});save();toast('Appointment saved');render()}
+function apSt(id,st){S.appts.find(a=>a.id==id).status=st;save();render()}
+function delAp(id){ask('Delete this appointment?',()=>{S.appts=S.appts.filter(a=>a.id!=id);save();render()})}
+function askNotif(){try{Notification.requestPermission().then(p=>{toast(p=='granted'?'Browser reminders allowed':'Permission not granted',p=='granted'?'':'err');render()})}catch(e){toast('Notifications not supported here','err')}}
+const fired={};setInterval(()=>{try{if(!S||S.prefs.notify===false||!('Notification' in window)||Notification.permission!='granted')return;todayDoses().forEach(x=>{const k=td()+x.m.id+x.t;if(!x.st&&x.t==nowHM()&&!fired[k]){fired[k]=1;new Notification('MedID reminder',{body:x.m.name+' – '+x.m.dose})}})}catch(e){}},20000);
+
+function recItem(r){return`<div class="item" onclick="go('detail','${r.id}')"><div class="row"><b>${esc(r.title)}</b><span class="tag">${esc(r.cat)}</span></div><p class="mu">${esc(r.provider)} · ${fd(r.date)}${r.file?' · 📎':''}</p></div>`}
+function keepFocus(){const q=cur.q;render();const e=$('#q');e.focus();e.setSelectionRange(q.length,q.length)}
+function qrCells(){let h=0;for(const c of S.token)h=(h*31+c.charCodeAt(0))>>>0;let o='';for(let y=0;y<15;y++)for(let x=0;x<15;x++){const f=(x<4&&y<4)||(x>10&&y<4)||(x<4&&y>10);const edge=f&&(x%14<1||y%14<1||x==3||y==3||x==11||y==11||y==11||x==0||y==0||x==14||y==14);h=(h*1103515245+12345)>>>0;o+=`<i class="${f?(edge||(x%14>0&&x%14<3&&y%14>0&&y%14<3)?'k':''):(h>>16)&1?'k':''}"></i>`}return o}
+let file=null;
+function pickFile(el){file=null;const f=el.files[0],m=$('#fm');if(!f)return;if(!OKT.includes(f.type)){el.value='';m.innerHTML='<span class="er">Unsupported type. Use PDF, JPG or PNG.</span>';return}
+if(f.size>MAXB){el.value='';m.innerHTML='<span class="er">File too large (max 1 MB).</span>';return}
+const r=new FileReader();r.onload=()=>{file={name:f.name,type:f.type,data:r.result};m.innerHTML='<span class="ok">Ready: '+esc(f.name)+'</span>'};r.onerror=()=>m.innerHTML='<span class="er">Could not read file.</span>';r.readAsDataURL(f)}
+function saveRec(id){const v=i=>$('#'+i).value.trim(),e=$('#err');if(!v('t')||!v('pv')||!v('d')){e.textContent='Title, provider and date are required.';return}
+const o={title:v('t'),cat:v('c'),provider:v('pv'),date:v('d'),notes:v('n')},old=S.records.find(r=>r.id==id),bak=JSON.stringify(S.records);
+if(old)Object.assign(old,o,file?{file}:{});else S.records.push({id:uid(),...o,...(file?{file}:{})});
+if(!save()){S.records=JSON.parse(bak);return e.textContent='Save failed — the attachment may be too large for browser storage.'}
+file=null;toast(old?'Record updated':'Record added');go(old?'detail':'records',old?id:null)}
+function delRec(id){ask('Delete this record permanently?',()=>{S.records=S.records.filter(r=>r.id!=id);save();toast('Record deleted');go('records')})}
+async function shareRec(id){const r=S.records.find(x=>x.id==id),t=`${r.title} (${r.cat})\n${r.provider}, ${fd(r.date)}\n${r.notes||''}`;
+try{if(navigator.share){await navigator.share({title:r.title,text:t});return}}catch(e){if(e.name=='AbortError')return}
+try{await navigator.clipboard.writeText(t);toast('Summary copied to clipboard (attachment not included)')}catch(e){toast('Sharing not available in this browser','err')}}
+function saveProf(){const v=i=>$('#'+i).value.trim();if(!v('p1')){$('#err').textContent='Name is required.';return}
+Object.assign(S.profile,{name:v('p1'),blood:v('p2'),allergies:v('p3'),conditions:v('p4'),meds:v('p5'),donor:v('p6'),notes:v('p7')});if(save()){toast('Emergency info saved');render()}}
+function savePers(){const v=i=>$('#'+i).value.trim();if(!v('n1')){$('#err').textContent='Name is required.';return}Object.assign(S.profile,{name:v('n1'),dob:v('n2'),phone:v('n3')});if(save())toast('Profile saved')}
+function addContact(){const n=$('#cn').value.trim(),p=$('#cp').value.trim(),e=$('#err');if(!n){e.textContent='Name is required.';return}if(!/^\+?[\d\s-]{7,15}$/.test(p)){e.textContent='Enter a valid phone number (7–15 digits).';return}
+S.contacts.push({id:uid(),name:n,rel:$('#cr').value.trim()||'Contact',phone:p});save();toast('Contact added');render()}
+function delContact(id){ask('Remove this contact?',()=>{S.contacts=S.contacts.filter(c=>c.id!=id);save();toast('Contact removed');render()})}
+function askLoc(){const el=$('#loc');if(!navigator.geolocation){cur.locErr='Location not supported';el.textContent=cur.locErr;return toast('Location not supported here','err')}
+el.textContent='Requesting…';navigator.geolocation.getCurrentPosition(p=>{cur.loc={lat:p.coords.latitude,lng:p.coords.longitude};el.textContent=cur.loc.lat.toFixed(5)+', '+cur.loc.lng.toFixed(5);toast('Location found')},
+e=>{cur.locErr=e.code==1?'Permission denied — alert can still be sent without location':'Location unavailable';el.textContent=cur.locErr;toast(cur.locErr,'err')},{timeout:8000})}
+function getLoc(){return new Promise(res=>{if(cur.loc||!navigator.geolocation)return res(cur.loc||null);navigator.geolocation.getCurrentPosition(p=>{cur.loc={lat:p.coords.latitude,lng:p.coords.longitude};res(cur.loc)},()=>res(null),{timeout:8000,enableHighAccuracy:true})})}
+async function startSos(ev){const to=[...document.querySelectorAll('.cc:checked')].map(c=>c.value),ph=S.contacts.filter(c=>to.includes(c.name)).map(c=>c.phone.replace(/[\s-]/g,''));
+const b=window.event&&window.event.target;if(b){b.disabled=true;b.textContent='Sending…'}
+await getLoc();
+let res=null,err='';try{const r=await fetch('/api/sos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:S.profile.name,blood:S.profile.blood,allergies:S.profile.allergies,loc:cur.loc||null,phones:ph})});const j=await r.json();if(!r.ok)throw new Error(j.error||'Server error');res=j.results}catch(e){err=e.message==='Failed to fetch'?'Server not reachable. Run the app with npm start and open http://localhost:3000':e.message}
+const any=res&&res.some(x=>x.ok);S.alert={t:Date.now(),status:'active',loc:cur.loc||null,to,results:res,err};S.log.unshift({id:uid(),t:Date.now(),ev:res?'SOS sent: '+res.map(x=>x.channel+(x.ok?' OK':' FAILED')).join(', '):'SOS FAILED: '+err});save();toast(any?'Alert sent — see status':'Alert failed — see status',any?'':'err');go('sos',null,{sos:0})}
+async function cancelSos(){let m='Alert cancelled here. Contacts were not told (server unreachable).';try{const r=await fetch('/api/sos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:S.profile.name,cancel:true,phones:S.contacts.map(c=>c.phone.replace(/[\s-]/g,''))})});if(r.ok)m='Alert cancelled and contacts notified'}catch(e){}S.alert.status='cancelled';S.log.unshift({id:uid(),t:Date.now(),ev:'SOS cancelled'});save();toast(m);go('sos',null,{sos:0})}
+S=load();S.meds=S.meds||seedMeds();S.appts=S.appts||seedAppts();S.prefs.theme=S.prefs.theme||'auto';applyTheme();render();
+</script></body></html>
